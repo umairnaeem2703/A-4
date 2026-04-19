@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.3.13)  20 APR 2026 01:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.3.13)  20 APR 2026 01:31
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -615,112 +615,94 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has 
                                                   \__shipout_drop_firstpage_...
 l.551 \end{table}
                   <./q2a_structure.png>]
-File: q2a_structure.png Graphic file (type png)
-<use q2a_structure.png>
-Package pdftex.def Info: q2a_structure.png  used on input line 566.
-(pdftex.def)             Requested size: 407.66833pt x 157.68515pt.
 <q2a_solver_results.png, id=223, 545.78906pt x 667.74469pt>
 File: q2a_solver_results.png Graphic file (type png)
 <use q2a_solver_results.png>
-Package pdftex.def Info: q2a_solver_results.png  used on input line 575.
+Package pdftex.def Info: q2a_solver_results.png  used on input line 566.
 (pdftex.def)             Requested size: 317.07614pt x 387.9239pt.
  [13
 pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.579 
-      
+l.570 
+      ]
+<q2b_structure.png, id=231, 760.0395pt x 422.7795pt>
+File: q2b_structure.png Graphic file (type png)
+<use q2b_structure.png>
+Package pdftex.def Info: q2b_structure.png  used on input line 586.
+(pdftex.def)             Requested size: 407.66833pt x 226.76862pt.
+ [14
 pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.579 
-      ]
-<q2b_structure.png, id=233, 760.0395pt x 422.7795pt>
-File: q2b_structure.png Graphic file (type png)
-<use q2b_structure.png>
-Package pdftex.def Info: q2b_structure.png  used on input line 595.
-(pdftex.def)             Requested size: 407.66833pt x 226.76862pt.
- [14
+l.590 
+       <./q2a_solver_results.png>]
+
+LaTeX Warning: Reference `tab:thermal_displacements' on page 15 undefined on input line 593.
+
+
+LaTeX Warning: Reference `tab:thermal_member_forces' on page 15 undefined on input line 614.
+
+
+LaTeX Warning: Reference `tab:thermal_reactions' on page 15 undefined on input line 641.
+
+[15
 pdfTeX warning (ext4): destination with the same identifier (name{figure.8}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.599 
-       <./q2a_solver_results.png>]
-
-LaTeX Warning: Reference `tab:thermal_displacements' on page 15 undefined on input line 602.
-
-
-LaTeX Warning: Reference `tab:thermal_member_forces' on page 15 undefined on input line 623.
-
-
-LaTeX Warning: Reference `tab:thermal_reactions' on page 15 undefined on input line 650.
-
-[15
-pdfTeX warning (ext4): destination with the same identifier (name{figure.9}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.666 \end{table}
+l.657 \end{table}
                  
 pdfTeX warning (ext4): destination with the same identifier (name{table.4}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.666 \end{table}
+l.657 \end{table}
                  
 pdfTeX warning (ext4): destination with the same identifier (name{table.5}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.666 \end{table}
+l.657 \end{table}
                   <./q2b_structure.png>]
-File: q2b_structure.png Graphic file (type png)
-<use q2b_structure.png>
-Package pdftex.def Info: q2b_structure.png  used on input line 681.
-(pdftex.def)             Requested size: 407.66833pt x 226.76862pt.
-<q2b_solver_results.png, id=253, 566.115pt x 659.46375pt>
+<q2b_solver_results.png, id=251, 566.115pt x 659.46375pt>
 File: q2b_solver_results.png Graphic file (type png)
 <use q2b_solver_results.png>
-Package pdftex.def Info: q2b_solver_results.png  used on input line 690.
+Package pdftex.def Info: q2b_solver_results.png  used on input line 672.
 (pdftex.def)             Requested size: 317.07614pt x 369.36761pt.
  [16
 pdfTeX warning (ext4): destination with the same identifier (name{table.6}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.694 
-      
+l.676 
+      ]
+<regression_pass.png, id=259, 658.71094pt x 139.27031pt>
+File: regression_pass.png Graphic file (type png)
+<use regression_pass.png>
+Package pdftex.def Info: regression_pass.png  used on input line 681.
+(pdftex.def)             Requested size: 407.66833pt x 86.19368pt.
+ [17
+pdfTeX warning (ext4): destination with the same identifier (name{figure.9}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.696 \subsection
+                 {Thermal Unit Tests}
 pdfTeX warning (ext4): destination with the same identifier (name{figure.10}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.694 
-      ]
-<regression_pass.png, id=263, 658.71094pt x 139.27031pt>
-File: regression_pass.png Graphic file (type png)
-<use regression_pass.png>
-Package pdftex.def Info: regression_pass.png  used on input line 699.
-(pdftex.def)             Requested size: 407.66833pt x 86.19368pt.
- [17
-pdfTeX warning (ext4): destination with the same identifier (name{figure.11}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.714 \subsection
-                 {Thermal Unit Tests}
-pdfTeX warning (ext4): destination with the same identifier (name{figure.12}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.714 \subsection
+l.696 \subsection
                  {Thermal Unit Tests} <./q2b_solver_results.png> <./regression_pass.png>] [18] [19
 pdfTeX warning (ext4): destination with the same identifier (name{table.7}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.792 
+l.774 
       ] [20
 pdfTeX warning (ext4): destination with the same identifier (name{table.8}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.847 \end{document}
+l.829 \end{document}
                     
 pdfTeX warning (ext4): destination with the same identifier (name{table.9}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.847 \end{document}
+l.829 \end{document}
                     ] (assignment_report.aux)
  ***********
 LaTeX2e <2025-11-01>
@@ -740,20 +722,20 @@ Package rerunfilecheck Warning: File `assignment_report.out' has changed.
 
 Package rerunfilecheck Info: Checksums for `assignment_report.out':
 (rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  795457AD321B54D603A3A29849283FE8;11522.
+(rerunfilecheck)             After:  99EB3139982A5BBF2F6972F71A18D040;10983.
  ) 
 Here is how much of TeX's memory you used:
- 13898 strings out of 467867
- 211058 string characters out of 5413942
+ 13892 strings out of 467867
+ 210956 string characters out of 5413942
  892189 words of memory out of 5000000
- 42406 multiletter control sequences out of 15000+600000
+ 42404 multiletter control sequences out of 15000+600000
  645695 words of font info for 83 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,15n,79p,1262b,2152s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcbx1200.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1200.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tctt1095.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1095.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0600.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0800.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1200.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1440.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1440.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2488.pk> <C:\Users\MOHAMMAD UMAIR\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1728.pk><C:/Users/MOHAMMAD UMAIR/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/MOHAMMAD UMAIR/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/MOHAMMAD UMAIR/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/MOHAMMAD UMAIR/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/MOHAMMAD UMAIR/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/MOHAMMAD UMAIR/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/MOHAMMAD UMAIR/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/MOHAMMAD UMAIR/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/MOHAMMAD UMAIR/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on assignment_report.pdf (21 pages, 1023791 bytes).
+Output written on assignment_report.pdf (21 pages, 1022280 bytes).
 PDF statistics:
- 883 PDF objects out of 1000 (max. 8388607)
- 194 named destinations out of 1000 (max. 500000)
+ 877 PDF objects out of 1000 (max. 8388607)
+ 190 named destinations out of 1000 (max. 500000)
  51 words of extra memory for PDF output out of 10000 (max. 10000000)
 

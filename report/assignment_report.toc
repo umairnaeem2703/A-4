@@ -34,17 +34,15 @@
 \contentsline {subsubsection}{\numberline {5.2.3}Solution: Support Reactions}{12}{subsubsection.5.2.3}%
 \contentsline {subsubsection}{\numberline {5.2.4}Solution: Member-End Forces}{13}{subsubsection.5.2.4}%
 \contentsline {subsubsection}{\numberline {5.2.5}Validation Summary}{13}{subsubsection.5.2.5}%
-\contentsline {subsubsection}{\numberline {5.2.6}SAP2000 Model --- Settlement Case (Q2a)}{13}{subsubsection.5.2.6}%
-\contentsline {subsubsection}{\numberline {5.2.7}Solver Results --- Settlement Case (Q2a)}{14}{subsubsection.5.2.7}%
+\contentsline {subsubsection}{\numberline {5.2.6}Solver Results --- Settlement Case (Q2a)}{14}{subsubsection.5.2.6}%
 \contentsline {subsection}{\numberline {5.3}Part b: Thermal Loading Analysis}{14}{subsection.5.3}%
 \contentsline {subsubsection}{\numberline {5.3.1}Problem Statement}{14}{subsubsection.5.3.1}%
 \contentsline {subsubsection}{\numberline {5.3.2}Solution: Nodal Displacements}{15}{subsubsection.5.3.2}%
 \contentsline {subsubsection}{\numberline {5.3.3}Solution: Member-End Forces}{15}{subsubsection.5.3.3}%
 \contentsline {subsubsection}{\numberline {5.3.4}Solution: Support Reactions}{16}{subsubsection.5.3.4}%
 \contentsline {subsubsection}{\numberline {5.3.5}Validation Summary}{16}{subsubsection.5.3.5}%
-\contentsline {subsubsection}{\numberline {5.3.6}SAP2000 Model --- Thermal Case (Q2b)}{16}{subsubsection.5.3.6}%
-\contentsline {subsubsection}{\numberline {5.3.7}Solver Results --- Thermal Case (Q2b)}{17}{subsubsection.5.3.7}%
-\contentsline {subsubsection}{\numberline {5.3.8}Regression Test Conclusion}{17}{subsubsection.5.3.8}%
+\contentsline {subsubsection}{\numberline {5.3.6}Solver Results --- Thermal Case (Q2b)}{17}{subsubsection.5.3.6}%
+\contentsline {subsubsection}{\numberline {5.3.7}Regression Test Conclusion}{17}{subsubsection.5.3.7}%
 \contentsline {section}{\numberline {6}Testing and Reliability}{18}{section.6}%
 \contentsline {subsection}{\numberline {6.1}Comprehensive Testing Suite}{18}{subsection.6.1}%
 \contentsline {subsection}{\numberline {6.2}Thermal Unit Tests}{18}{subsection.6.2}%
