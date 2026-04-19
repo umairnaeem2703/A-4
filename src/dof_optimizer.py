@@ -1,7 +1,7 @@
 # src/dof_optimizer.py
 
 from parser import StructuralModel
-from banded_solver import UnstableStructureError
+from structural_validator import StructuralValidator
 
 class DOFOptimizer:
     def __init__(self, model: StructuralModel):
@@ -12,76 +12,12 @@ class DOFOptimizer:
 
     def optimize(self) -> tuple[int, int, int]:
         """Runs the optimization and returns (num_equations, semi_bandwidth, full_bandwidth)."""
-        self._validate_structure()
+        StructuralValidator(self.model).validate()
         adj_list = self._build_adjacency_list()
         rcm_order = self._reverse_cuthill_mckee(adj_list)
         self._assign_dofs(rcm_order)
         self._calculate_bandwidth()
         return self.num_equations, self.semi_bandwidth, self.full_bandwidth
-
-    def _validate_structure(self):
-        """Per-solve topology checks. Identifies unsolvable structural configurations."""
-        # Fatal Check 1: Zero Supports
-        if not self.model.supports:
-            raise UnstableStructureError(
-                "No boundary conditions defined. "
-                "The structure is entirely unsupported — "
-                "rigid body modes exist. Global stiffness matrix K will be singular."
-            )
-
-        fatal_errors = []
-
-        # Fatal Check 2: Global X-Restraint
-        if not any(s.restrain_ux for s in self.model.supports.values()):
-            fatal_errors.append(
-                "No support restrains global x-translation. "
-                "The structure can sway freely in the x-direction. "
-                "Ensure at least one node is pinned or fixed."
-            )
-
-        # Connectivity Analysis
-        adj = {}
-        for el in self.model.elements.values():
-            ni, nj = el.node_i.id, el.node_j.id
-            adj.setdefault(ni, set()).add(nj)
-            adj.setdefault(nj, set()).add(ni)
-
-        # BFS to find connected components
-        unvisited = set(adj)
-        components = []
-        while unvisited:
-            start = next(iter(unvisited))
-            queue, component = [start], set()
-            while queue:
-                node = queue.pop(0)
-                if node in component:
-                    continue
-                component.add(node)
-                queue.extend(n for n in adj.get(node, []) if n not in component)
-            unvisited -= component
-            components.append(frozenset(component))
-
-        # Fatal Check 3: Floating Sub-structures
-        for component in components:
-            has_support = any(n in self.model.supports for n in component)
-            if not has_support:
-                floating_members = sorted(
-                    el.id for el in self.model.elements.values()
-                    if el.node_i.id in component or el.node_j.id in component
-                )
-                fatal_errors.append(
-                    f"Member(s) [{', '.join(floating_members)}] form a floating "
-                    "sub-structure with no supports. Their DOFs will cause singular rows in K."
-                )
-
-        if fatal_errors:
-            raise UnstableStructureError(
-                "\n".join(f"  ↳ {e}" for e in fatal_errors)
-            )
-
-        if len(components) > 1:
-            print(f"INFO: {len(components)} disconnected sub-structures detected. "
-                  "All parts are independently supported and solvable.")
 
     def _has_rotational_stiffness(self, node_id: int) -> bool:
         """
@@ -97,20 +33,34 @@ class DOFOptimizer:
                     return True
         return False
 
-    def _build_adjacency_list(self) -> dict:
-        """Creates an adjacency graph of node connectivity, excluding fully restrained nodes."""
-        adj = {}
-        
+    def _get_active_nodes(self) -> set:
+        """Identifies nodes that have at least one active DOF."""
+        active_nodes = set()
         for n_id, node in self.model.nodes.items():
             support = self.model.supports.get(n_id)
-            # Check if node has at least one active DOF
-            has_active = not (support and support.restrain_ux and support.restrain_uy and support.restrain_rz)
+            has_active = False
             
-            if has_active or any(el.node_i.id == n_id or el.node_j.id == n_id for el in self.model.elements.values()):
-                adj[n_id] = set()
+            if not (support and support.restrain_ux):
+                has_active = True
+            if not (support and support.restrain_uy):
+                has_active = True
+                
+            # Only assign an active rotational DOF if the node actually has rotational stiffness
+            if self._has_rotational_stiffness(n_id) and not (support and support.restrain_rz):
+                has_active = True
+                
+            if has_active:
+                active_nodes.add(n_id)
+                
+        return active_nodes
+
+    def _build_adjacency_list(self) -> dict:
+        """Creates an adjacency graph of node connectivity, excluding fully restrained nodes."""
+        active_nodes = self._get_active_nodes()
+        adj = {n_id: set() for n_id in active_nodes}
         
         for el in self.model.elements.values():
-            if el.node_i.id in adj and el.node_j.id in adj:
+            if el.node_i.id in active_nodes and el.node_j.id in active_nodes:
                 adj[el.node_i.id].add(el.node_j.id)
                 adj[el.node_j.id].add(el.node_i.id)
                 

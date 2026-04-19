@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Dict, List
 
@@ -43,13 +44,23 @@ class Support:
     restrain_ux: bool = False
     restrain_uy: bool = False
     restrain_rz: bool = False
-    settlement_ux: float = 0.0  # Prescribed displacement in x [length]
-    settlement_uy: float = 0.0  # Prescribed displacement in y [length]
+    settlement_ux: float = 0.0    # Prescribed displacement in x direction [length]
+    settlement_uy: float = 0.0    # Prescribed displacement in y direction [length]
+    settlement_rz: float = 0.0    # Prescribed rotation about z axis [radians]
 
-# --- LOAD CLASSES ---
+# --- LOAD OOP HIERARCHY (From Diagram) ---
+
+class Load(ABC):
+    @abstractmethod
+    def NodalLoads(self) -> list:
+        pass
+
+    @abstractmethod
+    def FEF(self, fef_condition: str, L: float) -> list:
+        pass
 
 @dataclass
-class NodalLoad:
+class NodalLoad(Load):
     node: Node
     fx: float = 0.0
     fy: float = 0.0
@@ -62,8 +73,14 @@ class NodalLoad:
         return [[0.0] for _ in range(6)]
 
 @dataclass
-class PointLoad:
+class MemberLoad(Load, ABC):
     element: Element
+    
+    def NodalLoads(self) -> list:
+        return [0.0, 0.0, 0.0]
+
+@dataclass
+class PointLoad(MemberLoad):
     position: float
     fx: float = 0.0
     fy: float = 0.0
@@ -72,14 +89,12 @@ class PointLoad:
         fef = [[0.0] for _ in range(6)]
         a = self.position
         b = L - a
-        P = self.fy
+        P = abs(self.fy)
         fx_load = self.fx
-
-        # Axial FEF
+        # Axial FEF (sign preserved for compression/tension)
         fef[0][0] = fx_load * b / L
         fef[3][0] = fx_load * a / L
-
-        # Transverse FEF
+        # Transverse FEF (magnitude used per textbook convention)
         if fef_condition == "fixed-fixed":
             fef[1][0] = P * (b**2) * (3*a + b) / (L**3)
             fef[2][0] = P * a * (b**2) / (L**2)
@@ -106,22 +121,18 @@ class PointLoad:
         return fef
 
 @dataclass
-class UniformlyDL:
-    element: Element
+class UniformlyDL(MemberLoad):
     wx: float = 0.0
     wy: float = 0.0
-    is_local: bool = False
 
     def FEF(self, fef_condition: str, L: float) -> list:
         fef = [[0.0] for _ in range(6)]
-        w = self.wy
+        w = abs(self.wy)
         wx = self.wx
-
-        # Axial FEF
+        # Axial FEF (sign preserved for consistency)
         fef[0][0] = wx * L / 2.0
         fef[3][0] = wx * L / 2.0
-
-        # Transverse FEF
+        # Transverse FEF (magnitude used per textbook convention)
         if fef_condition == "fixed-fixed":
             fef[1][0] = w * L / 2.0
             fef[2][0] = w * (L**2) / 12.0
@@ -146,83 +157,54 @@ class UniformlyDL:
         return fef
 
 @dataclass
-class TemperatureL:
-    element: Element
-    Tu: float = 0.0
-    Tb: float = 0.0
+class TemperatureL(MemberLoad):
+    Tu: float = 0.0  # Temperature at top surface
+    Tb: float = 0.0  # Temperature at bottom surface
 
     def FEF(self, fef_condition: str, L: float) -> list:
-        """
-        Computes Fixed-End Forces (FEF) for thermal loading.
+        """Computes thermal FEF: F_T = alpha * T_uniform * E * A, M_T = (alpha * delta_T / d) * E * I"""
+        fef = [[0.0] for _ in range(6)]
         
-        Implements the program thermal sign convention:
-        - Case 1 (Uniform): Tu == Tb
-          FEF = [-F_T, 0, 0, F_T, 0, 0]^T where F_T = alpha * T_uniform * E * A
-        
-                - Case 3 (Combined/Trapezoidal): Tu != Tb
-                    Decompose: delta_T = Tu - Tb, T_uniform = (Tu + Tb) / 2.0
-          F_T = alpha * T_uniform * E * A
-          M_T = (alpha * delta_T / d) * E * I
-          FEF = [-F_T, 0, -M_T, F_T, 0, M_T]^T (fixed-fixed base, adjusted for releases)
-        """
         E = self.element.material.E
         alpha = self.element.material.alpha
         A = self.element.section.A
         I = self.element.section.I
         d = self.element.section.d
         
-        # Program decomposition (Case 1 and Case 3)
-        delta_T = self.Tu - self.Tb
-        T_uniform = 0.5 * (self.Tu + self.Tb)
+        delta_T = self.Tb - self.Tu
+        T_uniform = self.Tu + (delta_T / 2.0)
         
         # Axial thermal force
         F_T = alpha * T_uniform * E * A
-        
-        # For truss elements, only accept uniform loads
-        if self.element.type == 'truss':
-            # Validate that gradient is zero for truss (uniform only)
-            if abs(delta_T) > 1e-9:  # tolerance for floating point
-                raise ValueError(
-                    f"Truss element '{self.element.id}' cannot accept gradient temperature loads. "
-                    f"Tu={self.Tu}, Tb={self.Tb} (delta_T={delta_T}). "
-                    f"For truss: Tu must equal Tb."
-                )
-            fef = [[0.0] for _ in range(4)]
-            fef[0][0] = -F_T
-            fef[3][0] =  F_T
-            return fef
-        
-        # For frame elements, return 6x1 FEF vector
-        fef = [[0.0] for _ in range(6)]
-        
-        # Axial FEF
         fef[0][0] = -F_T
         fef[3][0] =  F_T
         
-        # Thermal bending moment (using instructor's formula: M_T = (alpha * delta_T / d) * E * I)
+        # Trusses have only axial thermal effects
+        if self.element.type == 'truss':
+            return fef
+        
+        # Moment magnitude for frame elements
         M_T = (alpha * delta_T / d) * E * I if d != 0 else 0.0
         
-        # Apply thermal moments and shears based on end conditions
-        # Base fixed-fixed moments: [-F_T, 0, -M_T, F_T, 0, M_T]^T
+        # Adjust FEF based on end releases
         if fef_condition == "fixed-fixed":
+            # Base case: fully fixed at both ends
             fef[2][0] = -M_T
             fef[5][0] =  M_T
         elif fef_condition == "pin-fixed":
-            # Pin at i (moment released), fixed at j
+            # Pin at start, fixed at end: distribute moment and induce shear
             fef[2][0] = 0.0
-            fef[5][0] = M_T
-            # Induced shear due to moment release at pin
-            fef[1][0] = M_T / L
-            fef[4][0] = -M_T / L
+            fef[5][0] = M_T - 0.5 * M_T  # Moment adjustment for pin release
+            fef[1][0] = -1.5 * M_T / L    # Induced shear for equilibrium
+            fef[4][0] =  1.5 * M_T / L
         elif fef_condition == "fixed-pin":
-            # Fixed at i, pin at j (moment released)
-            fef[2][0] = -M_T
+            # Fixed at start, pin at end: distribute moment and induce shear
+            fef[2][0] = -M_T + 0.5 * M_T  # Moment adjustment for pin release
             fef[5][0] = 0.0
-            # Induced shear due to moment release at pin
-            fef[1][0] = -M_T / L
-            fef[4][0] = M_T / L
+            fef[1][0] =  1.5 * M_T / L    # Induced shear for equilibrium
+            fef[4][0] = -1.5 * M_T / L
         elif fef_condition == "pin-pin":
-            # Both ends pinned (moments released)
+            # Both ends pinned: no bending moment restraint
             fef[2][0] = 0.0
             fef[5][0] = 0.0
             
@@ -232,7 +214,7 @@ class TemperatureL:
 class LoadCase:
     id: str
     name: str = ""
-    loads: list = field(default_factory=list)
+    loads: List[Load] = field(default_factory=list)
 
 @dataclass
 class StructuralModel:
@@ -367,7 +349,7 @@ class XMLParser:
                 element = self.model.elements[udl.attrib['element']]
                 wx = float(udl.attrib.get('wx', 0.0))
                 wy = float(udl.attrib.get('wy', 0.0))
-                lc.loads.append(UniformlyDL(element, wx, wy, False))
+                lc.loads.append(UniformlyDL(element, wx, wy))
 
             # SCHEMA: member_point_load -> PointLoad
             for mpl in lc_node.findall('member_point_load'):
@@ -383,18 +365,30 @@ class XMLParser:
                 load_type = tload.attrib.get('type', 'uniform')
                 
                 if load_type == 'uniform':
+                    # Uniform thermal load: delta_T represents uniform temperature increase
                     dT = float(tload.attrib.get('delta_T', 0.0))
                     lc.loads.append(TemperatureL(element, Tu=dT, Tb=dT))
                 elif load_type == 'gradient':
                     if element.type == 'truss':
-                        raise ValueError(f"Truss element {element.id} cannot take gradient temperature loads.")
+                        raise ValueError(f"Truss element {element.id} cannot accept gradient temperature loads. "
+                                       "Only uniform thermal loads are valid for truss elements.")
                     dT = float(tload.attrib.get('delta_T', 0.0))
+                    # Gradient: delta_T is the top-to-bottom difference
+                    # Set Tu=dT/2, Tb=-dT/2 to create symmetric gradient around 0
                     lc.loads.append(TemperatureL(element, Tu=dT/2.0, Tb=-dT/2.0))
                 elif load_type == 'combined':
                     if element.type == 'truss':
-                        raise ValueError(f"Truss element {element.id} cannot take combined temperature loads.")
+                        raise ValueError(f"Truss element {element.id} cannot accept combined temperature loads. "
+                                       "Only uniform thermal loads are valid for truss elements.")
                     ttop = float(tload.attrib.get('T_top', 0.0))
                     tbot = float(tload.attrib.get('T_bottom', 0.0))
                     lc.loads.append(TemperatureL(element, Tu=ttop, Tb=tbot))
+
+            # Legacy: udl -> UniformlyDL
+            for udl in lc_node.findall('udl'):
+                element = self.model.elements[udl.attrib['element']]
+                wx = float(udl.attrib.get('wx', 0.0))
+                wy = float(udl.attrib.get('wy', 0.0))
+                lc.loads.append(UniformlyDL(element, wx, wy))
                 
             self.model.load_cases[lc_id] = lc

@@ -45,7 +45,33 @@
 
   ── UDL  (intensity w [kN/m], span L [m]) ────────────────────────────
 
+    FIXED-FIXED
+      Fy_i =  wL/2           Fy_j =  wL/2
+      Mz_i = -wL²/12         Mz_j = +wL²/12
+
+    PIN-FIXED  (i pinned, j fixed)
+      Fy_i =  3wL/8          Fy_j =  5wL/8
+      Mz_i =  0              Mz_j = +wL²/8
+
+    FIXED-PIN  (i fixed, j pinned)
+      Fy_i =  5wL/8          Fy_j =  3wL/8
+      Mz_i = -wL²/8          Mz_j =  0
+
+    PIN-PIN
+      Fy_i =  wL/2           Fy_j =  wL/2
+      Mz_i =  0              Mz_j =  0
+
   ── POINT LOAD  (magnitude P [kN], a = distance from node_i, b = L−a) ─
+
+    FIXED-FIXED
+      Fy_i =  Pb²(3a+b)/L³   Fy_j =  Pa²(3b+a)/L³
+      Mz_i = -Pab²/L²         Mz_j = +Pa²b/L²
+
+    PIN-PIN
+      Fy_i =  Pb/L            Fy_j =  Pa/L
+      Mz_i =  0               Mz_j =  0
+
+    PIN-FIXED / FIXED-PIN — computed internally via modified stiffness.
 
   ════════════════════════════════════════════════════════════════════════
   TEMPERATURE LOADS — FEF REFERENCE  (developer reference)
@@ -236,9 +262,6 @@
   </elements>
 
   <!-- ── BOUNDARY CONDITIONS (required) ───────────────────────────────
-
-       SUPPORT RESTRAINTS
-       ─────────────────────────────────────────────────────────────
        One <support> per restrained node.
        Attributes:
          node — references a <node id>
@@ -249,45 +272,29 @@
                   "roller_y" → ux=1  uy=0  rz=0  (free to slide in y)
                OR specify DOFs individually (1=restrained, 0=free):
                   ux="1" uy="1" rz="0"
-       Note: truss nodes have no rz DOF; rz is ignored for truss-only nodes.
-
-       SUPPORT SETTLEMENTS (Prescribed Displacements)
-       ─────────────────────────────────────────────────────────────
-       Optional settlement values applied at restrained nodes.
-       These represent prescribed displacements (e.g., foundation settlements,
-       expected displacements) that modify the effective load vector.
-
-       The solver uses matrix partitioning to enforce prescribed displacements:
-         U_r = [settlement_ux, settlement_uy] (known at restrained DOFs)
-         U_f = [unknowns]                     (free DOFs, to be solved)
        
-       The governing equation becomes:
-         K_ff · U_f = F - K_fr · U_r
+       PRESCRIBED SUPPORT SETTLEMENTS (optional):
+       Settlements are prescribed displacements applied to restrained DOFs.
+       Use any of these optional float attributes (default = 0.0):
+         settlement_ux — prescribed displacement in global x [length]
+         settlement_uy — prescribed displacement in global y [length]
+         settlement_rz — prescribed rotation about z axis [radians]
        
-       The unbalanced forces K_fr · U_r are computed at the element level
-       without explicitly forming K_fr, ensuring efficiency with banded storage.
-
-       Attributes:
-         settlement_ux — prescribed horizontal displacement [length]
-                        (positive = rightward displacement)
-                        Default: 0.0 (no settlement)
-         settlement_uy — prescribed vertical displacement [length]
-                        (positive = upward displacement)
-                        Default: 0.0 (no settlement)
+       Example: A 2 mm settlement downward at node 2:
+         <support node="2" type="pin" settlement_uy="-0.002"/>
        
-       Example:
-         <support node="1" type="fixed" settlement_ux="0.0" settlement_uy="-0.002"/>
-         (Fix node 1; prescribe 2 mm downward settlement)
-
-       Implementation note:
-         Only non-zero settlements affect the solution. Zero values are equivalent
-         to fixed-without-settlement supports, so omitting an attribute defaults it
-         to 0.0.
+       The solver implements settlements using matrix partitioning:
+       Active DOF equation: K_ff * U_f = F_f - K_fr * U_r
+       where U_r contains the prescribed settlement values, and the
+       unbalanced force term (-K_fr * U_r) is computed at the element level.
+       
+       Note: truss nodes have no rz DOF; settlement_rz is ignored for 
+              truss-only nodes.
   -->
   <boundary_conditions>
-    <support node="1" type="fixed" settlement_ux="0.0" settlement_uy="0.0"/>
-    <support node="2" type="pin" settlement_ux="0.0" settlement_uy="0.0"/>
-    <support node="3" type="roller_x" settlement_ux="0.0" settlement_uy="0.0"/>
+    <support node="1" type="fixed"/>
+    <support node="2" type="pin"/>
+    <support node="3" type="roller_x"/>
   </boundary_conditions>
 
   <!-- ── LOAD CASES (optional) ─────────────────────────────────────────
