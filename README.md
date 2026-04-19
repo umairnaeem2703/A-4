@@ -166,6 +166,7 @@ Error messages are printed to console with debugging context.
 - Bandwidth optimization reduces computation time for large models
 - The solver uses direct banded Gaussian elimination
 - Supports load case superposition for combined load analysis
+- SAP2000 have been uploaded.
 
 ---
 
